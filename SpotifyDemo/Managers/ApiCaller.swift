@@ -19,6 +19,7 @@ final class APICaller {
         static let browseNewReleaseUrl = "/browse/new-releases?limit=2"
         static let featurePlaylistUrl = "/browse/featured-playlists?limit=2"
         static let recommendationsGenreUrl = "/recommendations/available-genre-seeds"
+        static let recommendationsUrl = "/recommendations?limit=2"
     }
     
     enum APIError: Error {
@@ -37,7 +38,6 @@ final class APICaller {
                 do {
                     let result = try JSONDecoder().decode(UserProfile.self, from: data)
                     
-                    print(result)
                     completion(.success(result))
                 }
                 catch {
@@ -118,6 +118,32 @@ final class APICaller {
             task.resume()
         }
     }
+    
+    public func getRecommendations(genres: Set<String>,completion: @escaping ((Result<RecommendationsModel, Error>)) -> Void) {
+        let seeds = genres.joined(separator: ",")
+        createRequest(with: URL(string: Constants.baseAPIURL + Constants.recommendationsUrl + "&seed_genres=\(seeds)"), type: .GET) { request in
+            
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(RecommendationsModel.self, from: data)
+                    completion(.success(result))
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    
     
     // MARK: - private
     enum HTTPMethod: String {
