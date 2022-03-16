@@ -16,12 +16,9 @@ struct UserProfile: Codable {
 //    let followers: [String: Codable?]
     let id: String
     let product: String
-    let images: [UserImage]
+    let images: [APIImage]
     let type: String
     
     
 }
 
-struct UserImage: Codable {
-    let url: String
-}
