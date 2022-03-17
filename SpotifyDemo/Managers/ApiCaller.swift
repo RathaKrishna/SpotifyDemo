@@ -16,10 +16,10 @@ final class APICaller {
         static let baseAPIURL =  "https://api.spotify.com/v1"
         
         static let profileUrl = "/me"
-        static let browseNewReleaseUrl = "/browse/new-releases?limit=2"
-        static let featurePlaylistUrl = "/browse/featured-playlists?limit=2"
+        static let browseNewReleaseUrl = "/browse/new-releases?limit=50"
+        static let featurePlaylistUrl = "/browse/featured-playlists?limit=50"
         static let recommendationsGenreUrl = "/recommendations/available-genre-seeds"
-        static let recommendationsUrl = "/recommendations?limit=2"
+        static let recommendationsUrl = "/recommendations?limit=40"
     }
     
     enum APIError: Error {
