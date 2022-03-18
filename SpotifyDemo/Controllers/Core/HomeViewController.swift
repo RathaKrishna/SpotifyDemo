@@ -15,6 +15,10 @@ enum BrowseSectionType {
 }
 class HomeViewController: UIViewController {
     
+    private var newAlbums: [Album] = []
+    private var playlists: [Playlist] = []
+    private var tracks: [AudioTrack] = []
+    
     private var collectionView: UICollectionView = UICollectionView(
         frame: .zero,
         collectionViewLayout: UICollectionViewCompositionalLayout { sectionIndex, _ -> NSCollectionLayoutSection? in
@@ -126,27 +130,37 @@ class HomeViewController: UIViewController {
                   let playlists = featurePlaylist?.playlists.items,
                   let tracks = recommendations?.tracks else {
                       fatalError("Models are nil ")
-                return
-            }
+                      return
+                  }
             self.configureModels(newAlbums: newAlbums, playlists: playlists, tracks: tracks)
             
         }
         
         
     }
-    private func configureModels(newAlbums: [Album], playlists: [Playlist], tracks: [AudioTrack]) {
-        //Configure View models
-        sections.append(.newReleases(viewModel: newAlbums.compactMap({
-            return NewReleaseCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), numberOfTracks: $0.total_tracks, artistName: $0.artists.first?.name ?? "-")
-        })))
-        sections.append(.featuredPlaylist(viewModel: playlists.compactMap({
-            return FeaturedPlaylistCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), creatorName: $0.owner.display_name)
-        })))
-        sections.append(.recommendedTracks(viewModel: tracks.compactMap({
-            return RecommendedTrackCellViewModel(name: $0.name, artistName: $0.artists.first?.name ?? "_", artworkURL: URL(string: $0.album.images.first?.url ?? ""))
-        })))
-        collectionView.reloadData()
-    }
+    
+    
+    private func configureModels(
+        newAlbums: [Album],
+        playlists: [Playlist],
+        tracks: [AudioTrack]) {
+            
+            self.newAlbums = newAlbums
+            self.playlists = playlists
+            self.tracks = tracks
+            
+            //Configure View models
+            sections.append(.newReleases(viewModel: newAlbums.compactMap({
+                return NewReleaseCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), numberOfTracks: $0.total_tracks, artistName: $0.artists.first?.name ?? "-")
+            })))
+            sections.append(.featuredPlaylist(viewModel: playlists.compactMap({
+                return FeaturedPlaylistCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), creatorName: $0.owner.display_name)
+            })))
+            sections.append(.recommendedTracks(viewModel: tracks.compactMap({
+                return RecommendedTrackCellViewModel(name: $0.name, artistName: $0.artists.first?.name ?? "_", artworkURL: URL(string: $0.album.images.first?.url ?? ""))
+            })))
+            collectionView.reloadData()
+        }
     @objc func didTapSettings() {
         let vc = SettingsViewController()
         vc.title = "Settings"
@@ -174,11 +188,11 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         return sections.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-       
+        
         let type = sections[indexPath.section]
         switch type {
         case .newReleases(let viewModels):
-          guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewReleaseCollectionViewCell.identifier, for:  indexPath) as? NewReleaseCollectionViewCell else {
+            guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: NewReleaseCollectionViewCell.identifier, for:  indexPath) as? NewReleaseCollectionViewCell else {
                 return UICollectionViewCell()
             }
             let viewModel = viewModels[indexPath.row]
@@ -186,26 +200,44 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return cell
         case .featuredPlaylist(let viewModels):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: FeaturedPlaylistCollectionViewCell.identifier, for:  indexPath) as? FeaturedPlaylistCollectionViewCell else {
-                  return UICollectionViewCell()
-              }
+                return UICollectionViewCell()
+            }
             let viewModel = viewModels[indexPath.row]
             cell.configure(with: viewModel)
             return cell
         case .recommendedTracks(let viewModels):
             guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: RecommendedTrackCollectionViewCell.identifier, for:  indexPath) as? RecommendedTrackCollectionViewCell else {
-                  return UICollectionViewCell()
-              }
+                return UICollectionViewCell()
+            }
             let viewModel = viewModels[indexPath.row]
             cell.configure(with: viewModel)
             return cell
         }
-        
-        
-        
-       
+ 
+    }
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let section = sections[indexPath.section]
+        switch section {
+        case .featuredPlaylist:
+            let playlist = playlists[indexPath.row]
+            let vc = PlayListViewController(playlist: playlist)
+            vc.navigationItem.largeTitleDisplayMode = .never
+            vc.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(vc, animated: true)
+        case .newReleases:
+            let album = newAlbums[indexPath.row]
+            let vc = AlbumViewController(album: album)
+            vc.title = album.name
+            vc.navigationItem.largeTitleDisplayMode = .never
+            vc.hidesBottomBarWhenPushed = true
+            navigationController?.pushViewController(vc, animated: true)
+        case .recommendedTracks:
+            break
+        }
     }
     
-     static func createSectionLayout(section: Int) -> NSCollectionLayoutSection {
+    static func createSectionLayout(section: Int) -> NSCollectionLayoutSection {
         switch section {
         case 0:
             // Item
@@ -254,7 +286,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 subitem: item,
                 count: 1)
             
-           
+            
             // Section
             let section = NSCollectionLayoutSection(group: group)
             return section
