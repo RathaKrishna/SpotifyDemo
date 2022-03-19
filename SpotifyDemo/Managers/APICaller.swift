@@ -15,11 +15,13 @@ final class APICaller {
     struct Constants {
         static let baseAPIURL =  "https://api.spotify.com/v1"
         
-        static let profileUrl = "/me"
-        static let browseNewReleaseUrl = "/browse/new-releases?limit=50"
-        static let featurePlaylistUrl = "/browse/featured-playlists?limit=50"
-        static let recommendationsGenreUrl = "/recommendations/available-genre-seeds"
-        static let recommendationsUrl = "/recommendations?limit=40"
+        static let profileUrl = baseAPIURL + "/me"
+        static let browseNewReleaseUrl = baseAPIURL + "/browse/new-releases?limit=50"
+        static let featurePlaylistUrl = baseAPIURL + "/browse/featured-playlists?limit=50"
+        static let recommendationsGenreUrl = baseAPIURL + "/recommendations/available-genre-seeds"
+        static let recommendationsUrl = baseAPIURL + "/recommendations?limit=40"
+        static let albumDetailsUrl = baseAPIURL + "/albums/"
+        static let playlistDetailsUrl = baseAPIURL + "/playlists/"
     }
     
     enum APIError: Error {
@@ -28,7 +30,7 @@ final class APICaller {
     
     // MARK: - User profile
     public func getCurrentUserProfile(completion: @escaping (Result<UserProfile, Error>) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + Constants.profileUrl), type: .GET) { baseRequest in
+        createRequest(with: URL(string: Constants.profileUrl), type: .GET) { baseRequest in
             let task = URLSession.shared.dataTask(with: baseRequest) { data, _, error in
                 guard let data = data , error == nil else {
                     completion(.failure(APIError.failedToGetData))
@@ -52,7 +54,7 @@ final class APICaller {
     }
     // MARK: - Get New release
     public func getNewReleases(completion: @escaping ((Result<NewReleasesModel, Error>)) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + Constants.browseNewReleaseUrl), type: .GET) { request in
+        createRequest(with: URL(string: Constants.browseNewReleaseUrl), type: .GET) { request in
             
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -76,7 +78,7 @@ final class APICaller {
     
     // MARK: - Featured Playlist
     public func getFeaturedPlaylist(completion: @escaping ((Result<FeaturedPlaylistModel, Error>)) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + Constants.featurePlaylistUrl), type: .GET) { request in
+        createRequest(with: URL(string: Constants.featurePlaylistUrl), type: .GET) { request in
             
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -98,7 +100,7 @@ final class APICaller {
     
     // MARK: - Get Recommedations Genre
     public func getRecommedationGenre(completion: @escaping ((Result<RecommendedGenreModel, Error>)) -> Void) {
-        createRequest(with: URL(string: Constants.baseAPIURL + Constants.recommendationsGenreUrl), type: .GET) { request in
+        createRequest(with: URL(string: Constants.recommendationsGenreUrl), type: .GET) { request in
             
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -120,7 +122,7 @@ final class APICaller {
     
     public func getRecommendations(genres: Set<String>,completion: @escaping ((Result<RecommendationsModel, Error>)) -> Void) {
         let seeds = genres.joined(separator: ",")
-        createRequest(with: URL(string: Constants.baseAPIURL + Constants.recommendationsUrl + "&seed_genres=\(seeds)"), type: .GET) { request in
+        createRequest(with: URL(string: Constants.recommendationsUrl + "&seed_genres=\(seeds)"), type: .GET) { request in
             
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 
@@ -143,8 +145,49 @@ final class APICaller {
     }
     
     // MARK: - Albums
+    public func getAlbumDetails(for album: Album,  completion: @escaping ((Result<AlbumDetailsModel, Error>)) -> Void) {
+        createRequest(with: URL(string: Constants.albumDetailsUrl + album.id), type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                do {
+                    let result = try JSONDecoder().decode(AlbumDetailsModel.self, from: data)
+                    print(result)
+                    completion(.success(result))
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
     
-    
+    // MARK: - PlaylistDetails
+    public func getPlaylistDetails(for playlist: Playlist, completion: @escaping ((Result<PlaylistDeailsModel,Error>)) -> Void) {
+        createRequest(with: URL(string: Constants.playlistDetailsUrl + playlist.id), type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(PlaylistDeailsModel.self, from: data)
+                    print(result)
+                    completion(.success(result))
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
     // MARK: - Http Methods
     enum HTTPMethod: String {
         case GET

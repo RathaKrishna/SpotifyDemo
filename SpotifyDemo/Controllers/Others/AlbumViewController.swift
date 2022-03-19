@@ -22,7 +22,15 @@ class AlbumViewController: UIViewController {
 
         title = album.name
         view.backgroundColor = .systemBackground
+        fetchData()
     }
 
+    private func fetchData() {
+        APICaller.shared.getAlbumDetails(for: self.album) { result in
+            DispatchQueue.main.async {
+                
+            }
+        }
+    }
 
 }

@@ -12,6 +12,17 @@ enum BrowseSectionType {
     case featuredPlaylist(viewModel:  [FeaturedPlaylistCellViewModel]) //2
     case recommendedTracks(viewModel:  [RecommendedTrackCellViewModel]) //3
     
+    //Computed property
+    var title: String {
+        switch self {
+        case .newReleases:
+            return "New Released Album"
+        case .featuredPlaylist:
+            return "Featured Playlist"
+        case .recommendedTracks:
+            return "Just for You"
+        }
+    }
 }
 class HomeViewController: UIViewController {
     
@@ -60,6 +71,8 @@ class HomeViewController: UIViewController {
         collectionView.register(NewReleaseCollectionViewCell.self, forCellWithReuseIdentifier: NewReleaseCollectionViewCell.identifier)
         collectionView.register(FeaturedPlaylistCollectionViewCell.self, forCellWithReuseIdentifier: FeaturedPlaylistCollectionViewCell.identifier)
         collectionView.register(RecommendedTrackCollectionViewCell.self, forCellWithReuseIdentifier: RecommendedTrackCollectionViewCell.identifier)
+       
+        collectionView.register(TitleHeaderCollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: TitleHeaderCollectionReusableView.identifier)
         collectionView.delegate = self
         collectionView.dataSource = self
         collectionView.backgroundColor = .systemBackground
@@ -157,7 +170,7 @@ class HomeViewController: UIViewController {
                 return FeaturedPlaylistCellViewModel(name: $0.name, artworkURL: URL(string: $0.images.first?.url ?? ""), creatorName: $0.owner.display_name)
             })))
             sections.append(.recommendedTracks(viewModel: tracks.compactMap({
-                return RecommendedTrackCellViewModel(name: $0.name, artistName: $0.artists.first?.name ?? "_", artworkURL: URL(string: $0.album.images.first?.url ?? ""))
+                return RecommendedTrackCellViewModel(name: $0.name, artistName: $0.artists.first?.name ?? "_", artworkURL: URL(string: $0.album?.images.first?.url ?? ""))
             })))
             collectionView.reloadData()
         }
@@ -215,6 +228,14 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
         }
  
     }
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        guard let header = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: TitleHeaderCollectionReusableView.identifier, for: indexPath) as? TitleHeaderCollectionReusableView, kind == UICollectionView.elementKindSectionHeader else {
+            return UICollectionReusableView()
+        }
+        let title = sections[indexPath.section].title
+        header.configure(with: title)
+        return header
+    }
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
         let section = sections[indexPath.section]
@@ -238,6 +259,10 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
     }
     
     static func createSectionLayout(section: Int) -> NSCollectionLayoutSection {
+        
+        let supplymentryViews = [
+            NSCollectionLayoutBoundarySupplementaryItem(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(50)), elementKind: UICollectionView.elementKindSectionHeader, alignment: .top)
+        ]
         switch section {
         case 0:
             // Item
@@ -256,25 +281,27 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             // Section
             let section = NSCollectionLayoutSection(group: horizontalGroup)
             section.orthogonalScrollingBehavior = .groupPaging
+            section.boundarySupplementaryItems = supplymentryViews
             return section
         case 1:
             // Item
-            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(200)))
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(260)))
             item.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
             
             // Vertical group in horisontal group
             let verticalGroup = NSCollectionLayoutGroup.vertical(
-                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(400)),
+                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(520)),
                 subitem: item,
                 count: 2)
             
             let horizontalGroup = NSCollectionLayoutGroup.horizontal(
-                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(400)),
+                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(520)),
                 subitem: verticalGroup,
                 count: 1 )
             // Section
             let section = NSCollectionLayoutSection(group: horizontalGroup)
             section.orthogonalScrollingBehavior = .continuous
+            section.boundarySupplementaryItems = supplymentryViews
             return section
         case 2:
             // Item
@@ -289,6 +316,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             
             // Section
             let section = NSCollectionLayoutSection(group: group)
+            section.boundarySupplementaryItems = supplymentryViews
             return section
         default:
             // Item
@@ -301,6 +329,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
                 count: 1)
             // Section
             let section = NSCollectionLayoutSection(group: group)
+            section.boundarySupplementaryItems = supplymentryViews
             return section
         }
     }

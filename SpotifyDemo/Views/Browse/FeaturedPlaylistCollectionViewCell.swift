@@ -31,16 +31,12 @@ class FeaturedPlaylistCollectionViewCell: UICollectionViewCell {
         label.font = .systemFont(ofSize: 15, weight: .thin)
         return label
     }()
-    private let bottomVierw: UIView = {
-       let view = UIView()
-        view.backgroundColor = UIColor(white: 0, alpha: 0.4)
-        return view
-    }()
+  
     override init(frame: CGRect) {
         super.init(frame: frame)
         
+        contentView.backgroundColor = .secondarySystemBackground
         contentView.addSubview(playlistCoverImageView)
-        contentView.addSubview(bottomVierw)
         contentView.addSubview(playlistNameLabel)
         contentView.addSubview(creatorNameLabel)
         contentView.clipsToBounds = true
@@ -53,8 +49,8 @@ class FeaturedPlaylistCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        playlistCoverImageView.frame = CGRect(x: 0, y: 0, width: contentView.width, height: contentView.height)
-        bottomVierw.frame = CGRect(x: 0, y: contentView.height-60, width: contentView.width, height: 60)
+        playlistCoverImageView.frame = CGRect(x: 0, y: 0, width: contentView.width, height: contentView.height - 60)
+       
         playlistNameLabel.frame = CGRect(x: 3, y: contentView.height - 60, width: contentView.width - 6, height: 30)
         creatorNameLabel.frame = CGRect(x: 3, y: playlistNameLabel.bottom, width: contentView.width - 6, height: 30)
     }
