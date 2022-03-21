@@ -49,10 +49,19 @@ class FeaturedPlaylistCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        playlistCoverImageView.frame = CGRect(x: 0, y: 0, width: contentView.width, height: contentView.height - 60)
-       
-        playlistNameLabel.frame = CGRect(x: 3, y: contentView.height - 60, width: contentView.width - 6, height: 30)
-        creatorNameLabel.frame = CGRect(x: 3, y: playlistNameLabel.bottom, width: contentView.width - 6, height: 30)
+        playlistCoverImageView.snp.makeConstraints { make in
+            make.left.right.top.equalTo(0)
+            make.bottom.equalTo(contentView.snp.bottom).offset(-60)
+            make.width.equalToSuperview()
+        }
+        playlistNameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(10)
+            make.top.equalTo(playlistCoverImageView.snp.bottom).offset(3)
+        }
+        creatorNameLabel.snp.makeConstraints { make in
+            make.left.right.equalTo(10)
+            make.top.equalTo(playlistNameLabel.snp.bottom).offset(3)
+        }
     }
     
     override func prepareForReuse() {

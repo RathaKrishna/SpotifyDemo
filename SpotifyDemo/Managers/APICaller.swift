@@ -22,6 +22,7 @@ final class APICaller {
         static let recommendationsUrl = baseAPIURL + "/recommendations?limit=40"
         static let albumDetailsUrl = baseAPIURL + "/albums/"
         static let playlistDetailsUrl = baseAPIURL + "/playlists/"
+        static let categoryUrl = baseAPIURL + "/browse/categories?country=in"
     }
     
     enum APIError: Error {
@@ -188,6 +189,53 @@ final class APICaller {
             task.resume()
         }
     }
+    
+    // MARK: - Categories
+    public func getCatogries(completion: @escaping ((Result<CategoriesModel, Error>)) -> Void) {
+        createRequest(with: URL(string: Constants.categoryUrl + "&limit=2"), type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data , error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    let result = try JSONDecoder().decode(CategoriesModel.self, from: data)
+                    print(result)
+                    completion(.success(result))
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    // MARK: - singe Category
+    
+    public func getCategoryPlaylist(for categoryId: String, completion: @escaping ((Result<String, Error>)) -> Void) {
+        createRequest(with: URL(string: Constants.categoryUrl + "&\(categoryId)"), type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data , error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                
+                do {
+                    let json = try JSONSerialization.jsonObject(with: data, options: .allowFragments)
+                    print(json)
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
     // MARK: - Http Methods
     enum HTTPMethod: String {
         case GET

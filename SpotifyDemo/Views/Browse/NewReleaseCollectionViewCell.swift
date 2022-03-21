@@ -52,30 +52,25 @@ class NewReleaseCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         let imageSize: CGFloat = contentView.height - 10
-        let albumLableSize = albumNameLabel.sizeThatFits(CGSize(width: contentView.width-imageSize-10, height: contentView.height-10))
-        numberOfTracksLabel.sizeToFit()
-        artistNameLabel.sizeToFit()
         
-        albumCoverImageView.frame = CGRect(x: 5, y: 5, width: imageSize, height: imageSize)
+        albumCoverImageView.snp.makeConstraints { make in
+            make.left.top.equalTo(5)
+            make.width.height.equalTo(imageSize)
+        }
+        albumNameLabel.snp.makeConstraints { make in
+            make.left.equalTo(albumCoverImageView.snp.right).offset(10)
+            make.top.right.equalTo(5)
+        }
+        artistNameLabel.snp.makeConstraints { make in
+            make.left.equalTo(albumNameLabel)
+            make.top.equalTo(albumNameLabel.snp.bottom)
+        }
+        numberOfTracksLabel.snp.makeConstraints { make in
+            make.left.equalTo(albumNameLabel)
+            make.top.equalTo(artistNameLabel.snp.bottom)
+            make.bottom.equalToSuperview().offset(-10)
+        }
         
-        let albumHeight = min(60, albumLableSize.height)
-        albumNameLabel.frame = CGRect(
-            x: albumCoverImageView.right+10,
-            y: 5,
-            width: albumLableSize.width,
-            height: albumHeight)
-        
-        artistNameLabel.frame = CGRect(
-            x: albumCoverImageView.right+10,
-            y: albumNameLabel.bottom,
-            width: contentView.width - albumCoverImageView.right-10,
-            height: 30)
-        
-        numberOfTracksLabel.frame = CGRect(
-            x: albumCoverImageView.right+10,
-            y: contentView.height - 44,
-            width: numberOfTracksLabel.width,
-            height: 44)
     }
     
     override func prepareForReuse() {

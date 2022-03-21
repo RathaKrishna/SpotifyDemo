@@ -14,8 +14,6 @@ class RecommendedTrackCollectionViewCell: UICollectionViewCell {
         let imageView = UIImageView()
         imageView.image = UIImage(systemName: "photo")
         imageView.contentMode = .scaleAspectFill
-        imageView.layer.cornerRadius = 5
-        imageView.clipsToBounds = true
         return imageView
     }()
     
@@ -48,10 +46,22 @@ class RecommendedTrackCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        trackCoverImageView.frame = CGRect(x: 5, y: 2, width: contentView.height-4, height: contentView.height-4)
+        let imageSize: CGFloat = contentView.height - 4
+        
+        trackCoverImageView.snp.makeConstraints { make in
+            make.left.top.equalTo(5)
+            make.width.height.equalTo(imageSize)
+        }
+        trackNameLabel.snp.makeConstraints { make in
+            make.left.equalTo(trackCoverImageView.snp.right).offset(10)
+            make.top.right.equalTo(5)
+            make.bottom.lessThanOrEqualTo(contentView.snp.bottom).offset(-30)
+        }
+        artistNameLabel.snp.makeConstraints { make in
+            make.left.equalTo(trackNameLabel)
+            make.bottom.equalTo(contentView.snp.bottom).offset(-10)
+        }
        
-        trackNameLabel.frame = CGRect(x: trackCoverImageView.right+10, y: 0, width: contentView.width - trackCoverImageView.right-15, height: contentView.height/2)
-        artistNameLabel.frame = CGRect(x: trackCoverImageView.right+10, y: contentView.height/2, width: contentView.width - trackCoverImageView.right-15, height: contentView.height/2)
     }
     
     override func prepareForReuse() {

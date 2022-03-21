@@ -7,6 +7,7 @@
 
 import UIKit
 import SDWebImage
+import SnapKit
 
 protocol PlaylistHeaderCollectionReusableViewDelegate: AnyObject {
     func playlistHeaderReusableViewDidTapPlayAll(_ header: PlaylistHeaderCollectionReusableView)
@@ -75,7 +76,10 @@ final class PlaylistHeaderCollectionReusableView: UICollectionReusableView {
         backgroundColor = .systemBackground
         
         addSubview(imageView)
-        addSubview(stackView)
+        addSubview(nameLabel)
+        addSubview(descriptionLabel)
+        addSubview(ownerLabel)
+//        addSubview(stackView)
         addSubview(playAllButton)
         playAllButton.addTarget(self, action: #selector(didTapPlayAll), for: .touchUpInside)
         
@@ -94,7 +98,24 @@ final class PlaylistHeaderCollectionReusableView: UICollectionReusableView {
         let imageSize = height/1.8
         
         imageView.frame = CGRect(x: (width-imageSize) / 2, y: 20, width: imageSize, height: imageSize)
-        stackView.frame = CGRect(x: 10, y: imageView.bottom, width: width-20, height: height-imageSize - 60)
+        nameLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
+            make.top.equalTo(imageView.snp.bottom).offset(6)
+        }
+        
+        descriptionLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
+            make.top.equalTo(nameLabel.snp.bottom).offset(2)
+        }
+       
+        ownerLabel.snp.makeConstraints { make in
+            make.left.equalToSuperview().offset(10)
+            make.right.equalToSuperview().offset(-10)
+            make.top.equalTo(descriptionLabel.snp.bottom).offset(2)
+        }
+
         playAllButton.frame = CGRect(x: width - 80, y: height - 80, width: 60, height: 60)
     }
     

@@ -254,6 +254,7 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             vc.hidesBottomBarWhenPushed = true
             navigationController?.pushViewController(vc, animated: true)
         case .recommendedTracks:
+            
             break
         }
     }
@@ -285,17 +286,17 @@ extension HomeViewController: UICollectionViewDelegate, UICollectionViewDataSour
             return section
         case 1:
             // Item
-            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(260)))
+            let item = NSCollectionLayoutItem(layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(160), heightDimension: .absolute(220)))
             item.contentInsets = NSDirectionalEdgeInsets(top: 2, leading: 2, bottom: 2, trailing: 2)
             
             // Vertical group in horisontal group
             let verticalGroup = NSCollectionLayoutGroup.vertical(
-                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(520)),
+                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(160), heightDimension: .absolute(480)),
                 subitem: item,
                 count: 2)
             
             let horizontalGroup = NSCollectionLayoutGroup.horizontal(
-                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(200), heightDimension: .absolute(520)),
+                layoutSize: NSCollectionLayoutSize(widthDimension: .absolute(160), heightDimension: .absolute(480)),
                 subitem: verticalGroup,
                 count: 1 )
             // Section

@@ -7,6 +7,7 @@ target 'SpotifyDemo' do
 
   pod 'SDWebImage'
   pod 'Appirater'
-  pod 'Firebase/Analytics' 
+  pod 'Firebase/Analytics'
+  pod 'SnapKit', '~> 5.0.0'
 
 end
