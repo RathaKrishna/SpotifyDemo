@@ -1,5 +1,6 @@
 # SpotifyDemo
 
+Spotify Demo app with Spotify Api
 
 ![Apple iPhone 11 Pro Max Screenshot 0](https://user-images.githubusercontent.com/3157579/159450186-31dbf149-4050-4b60-abac-3f8ead62c928.png)
 ![Apple iPhone 11 Pro Max Screenshot 1](https://user-images.githubusercontent.com/3157579/159450202-04193e6c-8832-4835-b8e0-7cf40bb4aeae.png)
