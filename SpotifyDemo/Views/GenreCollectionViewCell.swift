@@ -14,7 +14,6 @@ class GenreCollectionViewCell: UICollectionViewCell {
        let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         imageView.tintColor = .white
-        imageView.image = UIImage(systemName: "music.quarternote.3", withConfiguration: UIImage.SymbolConfiguration(pointSize: 50, weight: .regular))
         return imageView
     }()
     

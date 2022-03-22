@@ -23,6 +23,7 @@ class CategoriesCollectionViewCell: UICollectionViewCell {
         let label = UILabel()
         label.textColor = .white
         label.font = .systemFont(ofSize: 20, weight: .semibold)
+//        label.textAlignment = .center
         return label
     }()
     
@@ -55,14 +56,20 @@ class CategoriesCollectionViewCell: UICollectionViewCell {
         super.prepareForReuse()
         label.text = nil
     }
+    
     override func layoutSubviews() {
         super.layoutSubviews()
-        label.frame = CGRect(x: 10, y: contentView.height / 2, width: contentView.width, height: contentView.height / 2)
-        imageView.frame = CGRect(x: contentView.width / 2, y: 0, width: contentView.width / 2, height: contentView.height / 2)
+        imageView.frame = contentView.bounds
+        label.snp.makeConstraints { make in
+            make.left.right.equalTo(10)
+            make.bottom.equalToSuperview().offset(-10)
+        }
+        
     }
     
-    func configure(with title: String) {
-        label.text = title
+    func configure(with viewModel: CategoriesCollectionViewCellViewModel) {
+        label.text = viewModel.title
+        imageView.sd_setImage(with: viewModel.imageUrl, completed: nil)
         contentView.backgroundColor = colors.randomElement()
     }
 }

@@ -9,6 +9,8 @@ import UIKit
 
 class SearchViewController: UIViewController, UISearchResultsUpdating {
     
+    var count: NSInteger = 2
+    
     let searchController: UISearchController = {
         let results = SearchResultViewController()
        let vc = UISearchController(searchResultsController: results)
@@ -34,6 +36,8 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
         return collectionView
     }()
 
+    private var categories = [Category]()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -53,6 +57,10 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
         super.viewDidLayoutSubviews()
         collectionView.frame = view.bounds
     }
+
+    private func getCount() -> NSInteger {
+        return count
+    }
     
     func updateSearchResults(for searchController: UISearchController) {
         guard let resultsController = searchController.searchResultsController as? SearchResultViewController, let query = searchController.searchBar.text, !query.trimmingCharacters(in: .whitespaces).isEmpty else {
@@ -64,11 +72,18 @@ class SearchViewController: UIViewController, UISearchResultsUpdating {
     }
     
     private func fetchData() {
-        APICaller.shared.getCatogries { result in
-            switch result {
-            case .success(let model): break
-            case .failure(let error): break
+        
+        APICaller.shared.getCatogries {[weak self] result in
+            DispatchQueue.main.async {
+                switch result {
+                case .success(let categories):
+                    self?.categories = categories
+                    self?.collectionView.reloadData()
+                case .failure(let error):
+                    print(error.localizedDescription)
+                }
             }
+           
         }
     }
 
@@ -81,13 +96,25 @@ extension SearchViewController: UICollectionViewDelegate, UICollectionViewDataSo
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 20
+        return categories.count
     }
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: CategoriesCollectionViewCell.identifier, for: indexPath) as? CategoriesCollectionViewCell else {
             return UICollectionViewCell()
         }
-        cell.configure(with: "Rock")
+        let category = categories[indexPath.row]
+        
+        cell.configure(with: CategoriesCollectionViewCellViewModel(title: category.name, imageUrl: URL(string: category.icons.first?.url ?? "")))
         return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        collectionView.deselectItem(at: indexPath, animated: true)
+        let vc = CategoryViewController(category: categories[indexPath.row])
+        vc.navigationItem.largeTitleDisplayMode = .never
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+                                        
+        
     }
 }
