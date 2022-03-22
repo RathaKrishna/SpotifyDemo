@@ -23,6 +23,7 @@ final class APICaller {
         static let albumDetailsUrl = baseAPIURL + "/albums/"
         static let playlistDetailsUrl = baseAPIURL + "/playlists/"
         static let categoryUrl = baseAPIURL + "/browse/categories"
+        static let searchUrl = baseAPIURL + "/search?type=album,artist,playlist,track&include_external=audio&limit=10"
     }
     
     enum APIError: Error {
@@ -224,6 +225,32 @@ final class APICaller {
                     let result = try JSONDecoder().decode(FeaturedPlaylistModel.self, from: data)
                     let playlists = result.playlists.items
                     completion(.success(playlists))
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(.failure(error))
+                }
+            }
+            task.resume()
+        }
+    }
+    
+    // MARK: - Search
+    public func search(with query: String, completion: @escaping (Result<[SearchResults], Error>) -> Void) {
+        createRequest(with: URL(string: Constants.searchUrl + "&q=\(query.addingPercentEncoding(withAllowedCharacters: .urlQueryAllowed) ?? "")"), type: .GET) { request in
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                guard let data = data, error == nil else {
+                    completion(.failure(APIError.failedToGetData))
+                    return
+                }
+                do{
+                    let result = try JSONDecoder().decode(SearchResultModel.self, from: data)
+                    var searchResult: [SearchResults] = []
+                    searchResult.append(contentsOf: result.tracks.items.compactMap({ .track(model: $0)}))
+                    searchResult.append(contentsOf: result.albums.items.compactMap({ .album(model: $0)}))
+                    searchResult.append(contentsOf: result.artists.items.compactMap({ .artist(model: $0)}))
+                    searchResult.append(contentsOf: result.playlists.items.compactMap({ .playlist(model: $0)}))
+                    completion(.success(searchResult))
                 }
                 catch {
                     print(error.localizedDescription)

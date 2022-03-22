@@ -46,7 +46,7 @@ class RecommendedTrackCollectionViewCell: UICollectionViewCell {
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        let imageSize: CGFloat = contentView.height - 4
+        let imageSize: CGFloat = contentView.height - 5
         
         trackCoverImageView.snp.makeConstraints { make in
             make.left.top.equalTo(5)
