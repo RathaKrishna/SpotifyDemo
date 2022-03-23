@@ -23,6 +23,7 @@ class SearchResultViewController: UIViewController {
     private let tableView: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cell")
+        tableView.register(SearchResultsDefaultTableViewCell.self, forCellReuseIdentifier: SearchResultsDefaultTableViewCell.identifier)
         tableView.isHidden = true
         return tableView
     }()
@@ -92,17 +93,19 @@ extension SearchResultViewController : UITableViewDelegate, UITableViewDataSourc
         return sections[section].title
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultsDefaultTableViewCell.identifier, for: indexPath) as? SearchResultsDefaultTableViewCell else {
+            return UITableViewCell()
+        }
         let result = sections[indexPath.section].results[indexPath.row]
         switch result {
         case .artist(let model):
-            cell.textLabel?.text = model.name
+            cell.configure(with: SearchResultsDefaultCellViewModel(title: model.name, imageUrl: URL(string: model.images?.first?.url ?? ""), subTitle: nil))
         case .album(let model):
-            cell.textLabel?.text = model.name
+            cell.configure(with: SearchResultsDefaultCellViewModel(title: model.name, imageUrl: URL(string: model.images.first?.url ?? ""), subTitle: model.artists.first?.name ?? ""))
         case .track(let model):
-            cell.textLabel?.text = model.name
+            cell.configure(with: SearchResultsDefaultCellViewModel(title: model.name, imageUrl: URL(string: model.album?.images.first?.url ?? ""), subTitle: model.artists.first?.name ?? ""))
         case .playlist(let model):
-            cell.textLabel?.text = model.name
+            cell.configure(with: SearchResultsDefaultCellViewModel(title: model.name, imageUrl: URL(string: model.images.first?.url ?? ""), subTitle: model.owner.display_name))
         }
         return cell
     }
