@@ -8,7 +8,22 @@
 import Foundation
 import UIKit
 
+protocol PlayerControlsViewDelegate: AnyObject {
+    func playerDidTapPlayPauseButton(_ playerControlsView: PlayerControlsView)
+    func playerDidTapForwardButton(_ playerControlsView: PlayerControlsView)
+    func playerDidTapBackwardButton(_ playerControlsView: PlayerControlsView)
+    func playerControlsView(_ playControlsView: PlayerControlsView, didSlideSlider value: Float)
+}
+
+struct PlayerControlsViewViewModel {
+    var title: String
+    var subTitle: String
+}
+
 final class PlayerControlsView: UIView {
+    private var isPlaying = true
+    
+    weak var delegate: PlayerControlsViewDelegate?
     
     private let volumeSlider: UISlider = {
        let slider = UISlider()
@@ -48,7 +63,7 @@ final class PlayerControlsView: UIView {
     private let playPausButton: UIButton = {
         let button = UIButton()
         button.tintColor = .label
-        let image = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
+        let image = UIImage(systemName: "pause", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
         button.setImage(image, for: .normal)
         return button
     }()
@@ -58,7 +73,7 @@ final class PlayerControlsView: UIView {
         stackView.axis = .horizontal
         stackView.spacing = 20
         stackView.alignment = .center
-        stackView.distribution = .fillProportionally
+        stackView.distribution = .fillEqually
         [self.backButton, self.playPausButton, self.forwardButton].forEach { stackView.addArrangedSubview($0) }
         return stackView
     }()
@@ -66,7 +81,7 @@ final class PlayerControlsView: UIView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
-        backgroundColor = .red
+        backgroundColor = .systemBackground
         addSubview(volumeSlider)
         addSubview(nameLabel)
         addSubview(subTitleLabel)
@@ -75,10 +90,33 @@ final class PlayerControlsView: UIView {
 //        addSubview(forwardButton)
 //        addSubview(playPausButton)
         clipsToBounds = true
+        volumeSlider.addTarget(self, action: #selector(didSlideSlider(_:)), for: .valueChanged)
+        backButton.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
+        forwardButton.addTarget(self, action: #selector(didTapForward), for: .touchUpInside)
+        playPausButton.addTarget(self, action: #selector(didTapPlayPause), for: .touchUpInside)
     }
     
     required init?(coder: NSCoder) {
         fatalError()
+    }
+    // MARK: - Player Controls button actions
+    @objc func didSlideSlider(_ slider: UISlider) {
+        let value = slider.value
+        delegate?.playerControlsView(self, didSlideSlider: value)
+    }
+    @objc private func didTapBack() {
+        delegate?.playerDidTapBackwardButton(self)
+    }
+    @objc private func didTapForward() {
+        delegate?.playerDidTapForwardButton(self)
+    }
+    @objc private func didTapPlayPause() {
+        self.isPlaying = !isPlaying
+        delegate?.playerDidTapPlayPauseButton(self)
+        
+        let pause = UIImage(systemName: "pause", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
+        let play = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
+        playPausButton.setImage(isPlaying ? pause : play, for: .normal)
     }
     
     override func layoutSubviews() {
@@ -104,5 +142,10 @@ final class PlayerControlsView: UIView {
             make.top.equalTo(volumeSlider.snp.bottom).offset(30)
             make.height.equalTo(80)
         }
+    }
+    
+    public func configure(with viewModel: PlayerControlsViewViewModel) {
+        nameLabel.text = viewModel.title
+        subTitleLabel.text = viewModel.subTitle
     }
 }
