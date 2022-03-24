@@ -44,6 +44,7 @@ class PlayListViewController: UIViewController {
     }
     
     private var viewModels = [RecommendedTrackCellViewModel]()
+    private var tracks = [AudioTrack]()
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -83,8 +84,9 @@ class PlayListViewController: UIViewController {
             switch result {
             case .success(let model):
                 DispatchQueue.main.async {
+                    self?.tracks = model.tracks.items.compactMap({ $0.track })
                     self?.viewModels = model.tracks.items.compactMap({
-                        RecommendedTrackCellViewModel(name: $0.track.name, artistName: $0.track.artists.first?.name ?? "-", artworkURL: URL(string: $0.track.album.images.first?.url ?? ""))
+                        RecommendedTrackCellViewModel(name: $0.track.name, artistName: $0.track.artists.first?.name ?? "-", artworkURL: URL(string: $0.track.album?.images.first?.url ?? ""))
                     })
                     self?.collectionView.reloadData()
                 }
@@ -131,6 +133,9 @@ extension PlayListViewController: UICollectionViewDelegate, UICollectionViewData
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        let track = tracks[indexPath.row]
+        PlaybackPresenter.startPlayback(from: self, track: track)
+        
     }
     
 }
@@ -138,6 +143,6 @@ extension PlayListViewController: UICollectionViewDelegate, UICollectionViewData
 extension PlayListViewController: PlaylistHeaderCollectionReusableViewDelegate {
     func playlistHeaderReusableViewDidTapPlayAll(_ header: PlaylistHeaderCollectionReusableView) {
         //Start play list in queue
-        print("Clicked")
+        PlaybackPresenter.startPlayback(from: self, tracks: tracks)
     }
 }

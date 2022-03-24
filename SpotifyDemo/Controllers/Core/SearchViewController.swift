@@ -123,11 +123,7 @@ extension SearchViewController: SearchResultViewControllerDelegate {
             vc.navigationItem.largeTitleDisplayMode = .never
             navigationController?.pushViewController(vc, animated: true)
         case .track(let model):
-            guard let url = URL(string: model.external_urls["spotify"] ?? "") else {
-                return
-            }
-            let vc = SFSafariViewController(url: url)
-            present(vc, animated: true)
+            PlaybackPresenter.startPlayback(from: self, track: model)
         case .playlist(let model):
             let vc = PlayListViewController(playlist: model)
             vc.navigationItem.largeTitleDisplayMode = .never

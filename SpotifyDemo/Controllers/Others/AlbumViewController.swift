@@ -11,6 +11,7 @@ class AlbumViewController: UIViewController {
     
     private let album: Album
     private var viewModels = [RecommendedTrackCellViewModel]()
+    private var tracks = [AudioTrack]()
     
     private let collectionView = UICollectionView(frame: .zero, collectionViewLayout: UICollectionViewCompositionalLayout(sectionProvider: { _, _ ->NSCollectionLayoutSection? in
         
@@ -71,6 +72,7 @@ class AlbumViewController: UIViewController {
             switch result {
             case .success(let model):
                 DispatchQueue.main.async {
+                    self?.tracks = model.tracks.items
                     self?.viewModels = model.tracks.items.compactMap({
                         RecommendedTrackCellViewModel(name: $0.name, artistName: $0.artists.first?.name ?? "-", artworkURL: URL(string: $0.album?.images.first?.url ?? ""))
                     })
@@ -128,6 +130,8 @@ extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSou
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
         collectionView.deselectItem(at: indexPath, animated: true)
+        let track = tracks[indexPath.row]
+        PlaybackPresenter.startPlayback(from: self, track: track)
     }
     
 }
@@ -135,6 +139,6 @@ extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSou
 extension AlbumViewController: PlaylistHeaderCollectionReusableViewDelegate {
     func playlistHeaderReusableViewDidTapPlayAll(_ header: PlaylistHeaderCollectionReusableView) {
         //Start play list in queue
-        print("Clicked")
+        PlaybackPresenter.startPlayback(from: self, tracks: tracks)
     }
 }

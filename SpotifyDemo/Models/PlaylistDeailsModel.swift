@@ -23,19 +23,9 @@ struct PlaylistTracks: Codable {
     let items: [PlaylistItems]
 }
 struct PlaylistItems: Codable {
-    let added_at: String
-    let track: PlaylistTrack
+    let track: AudioTrack
     
 }
-struct PlaylistTrack: Codable {
-    let album: Album
-    let artists: [Artist]
-    let available_markets: [String]
-    let external_urls: [String: String]
-    let id: String
-    let name: String
-    let type: String
-    
-}
+
 
 
