@@ -8,7 +8,7 @@
 
 A Full Spotify Mustic App based on the latest Swift that fetches latest albums, tracks, playlists, episodes from https://api.spotify.com targeting iOS 15, macOS 12.
 
-Features
+# Features
 The app has several main features:
 
 Fetch songs based on categories: piano, pop, party, movies, opera, salsa, hip-hop, indian and many more
@@ -17,10 +17,10 @@ Share favorite playlist using native iOS share sheet UIActivityController.
 Support music player with previous and next track selection 
 Search news based on the search query you type on the search bar.
 
-Getting Started
+# Getting Started
 Register for an user account at https://spotify.com
 Download Xcode 13 from App Store.
 
-nstallation
+# Installation
 Build and run the project using iOS 15, iPadOS 15 physical devices or simulator from Xcode 13
 For building macOS 12 target you need to use Xcode 13 Beta 5 or upcoming Xcode 13.X release and macOS 12 Beta 7.
