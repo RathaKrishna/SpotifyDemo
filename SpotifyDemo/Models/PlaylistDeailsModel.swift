@@ -10,13 +10,10 @@ import Foundation
 struct PlaylistDeailsModel: Codable {
     let description: String
     let external_urls: [String: String]
-//    let followers:
     let id: String
     let images: [APIImage]
     let name: String
     let owner: User
-    let primary_color: String
-    let snapshot_id: String
     let tracks: PlaylistTracks
 }
 struct PlaylistTracks: Codable {

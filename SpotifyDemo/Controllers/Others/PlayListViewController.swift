@@ -92,7 +92,7 @@ class PlayListViewController: UIViewController {
                 }
                 
             case .failure(let error):
-                break
+                print(error.localizedDescription)
             }
         }
     }

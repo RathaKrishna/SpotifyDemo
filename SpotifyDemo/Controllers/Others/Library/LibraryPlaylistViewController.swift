@@ -9,6 +9,7 @@ import UIKit
 
 class LibraryPlaylistViewController: UIViewController {
 
+    public var selectionHandler: ((Playlist) -> Void)?
     private var playlists = [Playlist]()
     private let noDatView = NoDataView()
     
@@ -32,8 +33,15 @@ class LibraryPlaylistViewController: UIViewController {
         tableView.register(PlaylistsTableViewCell.self, forCellReuseIdentifier: PlaylistsTableViewCell.identifier)
         updatUI()
         fetchData()
+        
+        if selectionHandler != nil {
+            navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .close, target: self, action: #selector(didCloseTaped))
+        }
     }
 
+    @objc func didCloseTaped() {
+        dismiss(animated: true, completion: nil)
+    }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         noDatView.frame = view.bounds
@@ -114,6 +122,18 @@ extension LibraryPlaylistViewController: UITableViewDelegate, UITableViewDataSou
     }
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
+        
+        let playlist = playlists[indexPath.row]
+        
+        guard selectionHandler == nil else {
+            selectionHandler?(playlist)
+            dismiss(animated: true, completion: nil)
+            return
+        }
+        
+        let vc = PlayListViewController(playlist: playlist)
+        vc.navigationItem.largeTitleDisplayMode = .never
+        navigationController?.pushViewController(vc, animated: true)
     }
 }
 
