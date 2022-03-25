@@ -58,7 +58,7 @@ class HomeViewController: UIViewController {
         
         configureCollectionView()
         view.addSubview(spinner)
-//        fetchData()
+        fetchData()
     }
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()

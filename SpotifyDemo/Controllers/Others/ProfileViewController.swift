@@ -58,6 +58,7 @@ class ProfileViewController: UIViewController, UITableViewDelegate, UITableViewD
 //
         createTableHeader(with: model.images.first?.url)
         tableView.reloadData()
+        
     }
     
     private func createTableHeader(with string: String?) {
