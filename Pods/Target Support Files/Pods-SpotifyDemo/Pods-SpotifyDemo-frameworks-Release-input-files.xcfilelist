@@ -1,4 +1,5 @@
 ${PODS_ROOT}/Target Support Files/Pods-SpotifyDemo/Pods-SpotifyDemo-frameworks.sh
+${BUILT_PRODUCTS_DIR}/AQPlayer/AQPlayer.framework
 ${BUILT_PRODUCTS_DIR}/Appirater/Appirater.framework
 ${BUILT_PRODUCTS_DIR}/FirebaseCore/FirebaseCore.framework
 ${BUILT_PRODUCTS_DIR}/FirebaseCoreDiagnostics/FirebaseCoreDiagnostics.framework

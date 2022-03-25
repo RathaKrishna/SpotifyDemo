@@ -133,7 +133,8 @@ extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSou
         var track = tracks[indexPath.row]
         track.album = self.album
         
-        PlaybackPresenter.shared.startPlayback(from: self, track: track)
+//        PlaybackPresenter.shared.startPlayback(from: self, track: track)
+        PlayerPresenter.shared.startPlayback(from: self, tracks: [track])
     }
     
 }
@@ -146,6 +147,7 @@ extension AlbumViewController: PlaylistHeaderCollectionReusableViewDelegate {
             track.album = self.album
             return track
         })
-        PlaybackPresenter.shared.startPlayback(from: self, tracks: tracksWithAlbum)
+//        PlaybackPresenter.shared.startPlayback(from: self, tracks: tracksWithAlbum)
+        PlayerPresenter.shared.startPlayback(from: self, tracks: tracks)
     }
 }

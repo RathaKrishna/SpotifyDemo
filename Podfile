@@ -9,5 +9,6 @@ target 'SpotifyDemo' do
   pod 'Appirater'
   pod 'Firebase/Analytics'
   pod 'SnapKit', '~> 5.0.0'
+  pod 'AQPlayer'
 
 end
