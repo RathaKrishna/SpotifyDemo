@@ -7,12 +7,14 @@
 
 import Foundation
 import UIKit
+import AQPlayer
 
 protocol PlayerControlsViewDelegate: AnyObject {
     func playerDidTapPlayPauseButton(_ playerControlsView: PlayerControlsView)
     func playerDidTapForwardButton(_ playerControlsView: PlayerControlsView)
     func playerDidTapBackwardButton(_ playerControlsView: PlayerControlsView)
     func playerControlsView(_ playControlsView: PlayerControlsView, didSlideSlider value: Float)
+    func playerControlsView(_ playControlsView: PlayerControlsView, didFinishSlider value: Float)
 }
 
 struct PlayerControlsViewViewModel {
@@ -25,14 +27,17 @@ final class PlayerControlsView: UIView {
     
     weak var delegate: PlayerControlsViewDelegate?
     
-    private let volumeSlider: UISlider = {
+    public let progressSlider: UISlider = {
        let slider = UISlider()
-        slider.value = 0.5
+        slider.value = 0
+        slider.minimumValue = 0
+        slider.maximumValue = 1
+        slider.tintColor = .systemGreen
         return slider
     }()
     private let nameLabel: UILabel = {
        let label = UILabel()
-        label.text = "Title goes here"
+        label.text = ""
         label.numberOfLines = 1
         label.font = .systemFont(ofSize: 20, weight: .semibold)
         return label
@@ -40,20 +45,20 @@ final class PlayerControlsView: UIView {
     private let subTitleLabel: UILabel = {
        let label = UILabel()
         label.numberOfLines = 1
-        label.text = "subtitle goes here"
+        label.text = ""
         label.font = .systemFont(ofSize: 16, weight: .semibold)
         label.textColor = .secondaryLabel
         return label
     }()
     
-    private let backButton: UIButton = {
+    public let backButton: UIButton = {
         let button = UIButton()
         button.tintColor = .label
         let image = UIImage(systemName: "backward.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
         button.setImage(image, for: .normal)
         return button
     }()
-    private let forwardButton: UIButton = {
+    public let forwardButton: UIButton = {
         let button = UIButton()
         button.tintColor = .label
         let image = UIImage(systemName: "forward.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
@@ -68,6 +73,26 @@ final class PlayerControlsView: UIView {
         return button
     }()
     
+    public let timeLabel: UILabel = {
+       let label = UILabel()
+        label.numberOfLines = 1
+        label.text = "00:00"
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .left
+        return label
+    }()
+    
+    public let remainLabel: UILabel = {
+       let label = UILabel()
+        label.numberOfLines = 1
+        label.text = "00:00"
+        label.font = .systemFont(ofSize: 15, weight: .regular)
+        label.textColor = .secondaryLabel
+        label.textAlignment = .right
+        return label
+    }()
+    
     lazy var stackView: UIStackView = {
         let stackView = UIStackView()
         stackView.axis = .horizontal
@@ -78,19 +103,22 @@ final class PlayerControlsView: UIView {
         return stackView
     }()
     
+   
+    
     
     override init(frame: CGRect) {
         super.init(frame: frame)
         backgroundColor = .systemBackground
-        addSubview(volumeSlider)
+        addSubview(progressSlider)
         addSubview(nameLabel)
         addSubview(subTitleLabel)
         addSubview(stackView)
-//        addSubview(backButton)
-//        addSubview(forwardButton)
+        addSubview(timeLabel)
+        addSubview(remainLabel)
 //        addSubview(playPausButton)
         clipsToBounds = true
-        volumeSlider.addTarget(self, action: #selector(didSlideSlider(_:)), for: .valueChanged)
+        progressSlider.addTarget(self, action: #selector(didSlideSlider(_:)), for: .valueChanged)
+        progressSlider.addTarget(self, action: #selector(didSlideFinish(_:)), for: .touchUpInside)
         backButton.addTarget(self, action: #selector(didTapBack), for: .touchUpInside)
         forwardButton.addTarget(self, action: #selector(didTapForward), for: .touchUpInside)
         playPausButton.addTarget(self, action: #selector(didTapPlayPause), for: .touchUpInside)
@@ -104,6 +132,10 @@ final class PlayerControlsView: UIView {
         let value = slider.value
         delegate?.playerControlsView(self, didSlideSlider: value)
     }
+    @objc func didSlideFinish(_ slider: UISlider) {
+        delegate?.playerControlsView(self, didFinishSlider: slider.value)
+    }
+    
     @objc private func didTapBack() {
         delegate?.playerDidTapBackwardButton(self)
     }
@@ -111,12 +143,10 @@ final class PlayerControlsView: UIView {
         delegate?.playerDidTapForwardButton(self)
     }
     @objc private func didTapPlayPause() {
-        self.isPlaying = !isPlaying
+//        self.isPlaying = !isPlaying
         delegate?.playerDidTapPlayPauseButton(self)
         
-        let pause = UIImage(systemName: "pause", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
-        let play = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
-        playPausButton.setImage(isPlaying ? pause : play, for: .normal)
+       
     }
     
     override func layoutSubviews() {
@@ -129,19 +159,46 @@ final class PlayerControlsView: UIView {
             make.left.right.equalTo(nameLabel)
             make.top.equalTo(nameLabel.snp.bottom).offset(10)
         }
-        volumeSlider.snp.makeConstraints { make in
+        
+        timeLabel.snp.makeConstraints { make in
+            make.left.equalTo(20)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(10)
+        }
+        remainLabel.snp.makeConstraints { make in
+            make.right.equalToSuperview().offset(-20)
+            make.top.equalTo(subTitleLabel.snp.bottom).offset(10)
+        }
+        progressSlider.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(subTitleLabel.snp.bottom).offset(20)
+            make.top.equalTo(timeLabel.snp.bottom)
             make.height.equalTo(44)
         }
         
         stackView.snp.makeConstraints { make in
             make.left.equalTo(20)
             make.right.equalToSuperview().offset(-20)
-            make.top.equalTo(volumeSlider.snp.bottom).offset(30)
+            make.top.equalTo(progressSlider.snp.bottom).offset(20)
             make.height.equalTo(80)
         }
+        
+        
+    }
+    public func configPlayButton(status: AQPlayerStatus) {
+        var buttonImg: UIImage?
+        switch status {
+        case .none, .loading, .failed, .readyToPlay, .paused:
+            buttonImg = UIImage(systemName: "play.fill", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
+        
+        case .playing:
+            buttonImg = UIImage(systemName: "pause", withConfiguration: UIImage.SymbolConfiguration(pointSize: 34, weight: .regular))
+            
+        }
+       
+            playPausButton.setImage(buttonImg, for: .normal)
+        
+       
+        
     }
     
     public func configure(with viewModel: PlayerControlsViewViewModel) {

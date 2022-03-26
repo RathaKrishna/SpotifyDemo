@@ -124,7 +124,7 @@ extension SearchViewController: SearchResultViewControllerDelegate {
             navigationController?.pushViewController(vc, animated: true)
         case .track(let model):
 //            PlaybackPresenter.shared.startPlayback(from: self, track: model)
-            PlayerPresenter.shared.startPlayback(from: self, tracks: [model])
+            AudioPlayerPresenter.shared.startPlayback(from: self, tracks: [model])
         case .playlist(let model):
             let vc = PlayListViewController(playlist: model)
             vc.navigationItem.largeTitleDisplayMode = .never

@@ -179,7 +179,6 @@ final class APICaller {
                 
                 do {
                     let result = try JSONDecoder().decode(PlaylistDeailsModel.self, from: data)
-                    print(result)
                     completion(.success(result))
 
                 }
@@ -269,7 +268,6 @@ final class APICaller {
                 }
                 do {
                     let result = try JSONSerialization.jsonObject(with: data, options: .fragmentsAllowed)
-                    print(result)
                     if let response = result as? [String: Any],
                        response["snapshot_id"] as? String != nil {
                         completion(true)
