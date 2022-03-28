@@ -72,6 +72,7 @@ class AudioPlayerViewController: UIViewController {
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         playerManager.pause()
+        
     }
     private func configureBarButtons() {
         navigationController?.navigationBar.tintColor = .label

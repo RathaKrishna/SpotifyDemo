@@ -28,7 +28,7 @@ class SearchViewController: UIViewController, UISearchResultsUpdating, UISearchB
             item.contentInsets = NSDirectionalEdgeInsets(
                 top: 2, leading: 7, bottom: 2, trailing: 7)
             //group
-            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .absolute(150)), subitem: item, count: 2 )
+            let group = NSCollectionLayoutGroup.horizontal(layoutSize: NSCollectionLayoutSize(widthDimension: .fractionalWidth(1.0), heightDimension: .estimated(150)), subitem: item, count: 2 )
             group.contentInsets = NSDirectionalEdgeInsets(top: 10, leading: 0, bottom: 10, trailing: 0)
             //section
             return NSCollectionLayoutSection(group: group)
