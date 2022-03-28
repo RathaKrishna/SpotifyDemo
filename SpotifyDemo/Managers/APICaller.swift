@@ -169,7 +169,7 @@ final class APICaller {
         }
     }
     
-    public func getCurrentUserAlbum(completion: @escaping (Result<[Album], Error>) -> Void) {
+    public func getCurrentUserAlbum(completion: @escaping (Result<[AlbumItems], Error>) -> Void) {
         createRequest(with: URL(string: Constants.myAlbumstUrl), type: .GET) { request in
             let task = URLSession.shared.dataTask(with: request) { data, _, error in
                 guard let data = data, error == nil else {
@@ -178,8 +178,8 @@ final class APICaller {
                 }
                 
                 do {
-                    let result = try JSONDecoder().decode(AlbumsResponse.self, from: data)
-                    print(result)
+
+                    let result = try JSONDecoder().decode(SaveAlbumResponse.self, from: data)
                     completion(.success(result.items))
                 }
                 catch {
@@ -189,6 +189,30 @@ final class APICaller {
             }
             task.resume()
         }
+    }
+    
+    public func saveAlbum(album: Album, completion: @escaping (Bool) -> Void) {
+        
+        createRequest(with: URL(string:  Constants.myAlbumstUrl + "?ids=\(album.id)"), type: .PUT) { baseRequest in
+            var request = baseRequest
+            
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let code = (response as? HTTPURLResponse)?.statusCode,
+                      error == nil else {
+                    completion(false)
+                    return
+                }
+                print(code)
+                
+                completion(code == 200 ? true : false)
+                
+                
+            }
+            task.resume()
+        }
+        
     }
     
     // MARK: - Playlist
@@ -425,6 +449,7 @@ final class APICaller {
         case GET
         case POST
         case DELETE
+        case PUT
     }
     // MARK: - Create Requests
     private func createRequest(with url: URL?, type: HTTPMethod,  completion: @escaping (URLRequest) -> Void)  {

@@ -38,3 +38,10 @@ struct Album: Codable {
 
  
   
+struct SaveAlbumResponse: Codable {
+    let items: [AlbumItems]
+}
+
+struct AlbumItems: Codable {
+    let album: Album
+}

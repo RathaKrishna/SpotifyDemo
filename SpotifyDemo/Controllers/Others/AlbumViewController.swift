@@ -87,13 +87,29 @@ class AlbumViewController: UIViewController {
     }
     
     private func configureNavBar() {
-        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapShare))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .action, target: self, action: #selector(didTapAction))
+        
+       
     }
     
-    @objc func didTapShare() {
-        //Share
+    @objc func didTapAction() {
+        let actionSheet = UIAlertController(title: album.name, message: "Actions", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Save Albums", style: .default, handler: { [weak self] _ in
+            guard let strongSelf = self else {
+                return
+            }
+            APICaller.shared.saveAlbum(album: strongSelf.album) { success in
+                if success {
+                    NotificationCenter.default.post(name: .albumSavedNotification, object: nil)
+                }
+            }
+        }))
+        present(actionSheet, animated: true)
                 
     }
+    
+   
 }
 
 extension AlbumViewController: UICollectionViewDelegate, UICollectionViewDataSource {

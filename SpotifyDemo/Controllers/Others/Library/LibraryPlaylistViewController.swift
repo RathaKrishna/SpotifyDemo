@@ -91,10 +91,12 @@ class LibraryPlaylistViewController: UIViewController {
             }
             APICaller.shared.createPlaylist(with: text) {[weak self] success in
                 if success{
+                    HapticManager.shared.vibrate(for: .success)
                     //refresh the playlist
                     self?.fetchData()
                 }
                 else {
+                    HapticManager.shared.vibrate(for: .error)
                     print("Failed to create playlist")
                 }
             }

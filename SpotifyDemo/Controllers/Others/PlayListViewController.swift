@@ -93,10 +93,12 @@ class PlayListViewController: UIViewController {
             APICaller.shared.removeTrackFromPlaylist(track: trackToDelete, playlist: strongSelf.playlist) { success in
                 DispatchQueue.main.async {
                     if success {
+                        HapticManager.shared.vibrate(for: .success)
                         strongSelf.tracks.remove(at: indexPath.row)
                         strongSelf.viewModels.remove(at: indexPath.row)
                         strongSelf.collectionView.reloadData()
                     } else {
+                        HapticManager.shared.vibrate(for: .error)
                         print("couldn't remove")
                     }
                 }

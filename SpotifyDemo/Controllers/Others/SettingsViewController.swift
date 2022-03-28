@@ -54,17 +54,25 @@ class SettingsViewController: UIViewController, UITableViewDelegate, UITableView
     
     private func signOutTapped()
     {
-        AuthManager.shared.signout {[weak self] result in
-            if result {
-                DispatchQueue.main.async {
-                    let navVc = UINavigationController(rootViewController: WelcomeViewController())
-                    navVc.navigationBar.prefersLargeTitles = true
-                    navVc.viewControllers.first?.navigationItem.largeTitleDisplayMode = .always
-                    navVc.modalPresentationStyle = .fullScreen
-                    self?.present(navVc, animated: true)
+        let alert = UIAlertController(title: "Sign Out", message: "Are you sure?", preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        alert.addAction(UIAlertAction(title: "Sign Out", style: .destructive, handler: { _ in
+            AuthManager.shared.signout {[weak self] result in
+                if result {
+                    DispatchQueue.main.async {
+                        let navVc = UINavigationController(rootViewController: WelcomeViewController())
+                        navVc.navigationBar.prefersLargeTitles = true
+                        navVc.viewControllers.first?.navigationItem.largeTitleDisplayMode = .always
+                        navVc.modalPresentationStyle = .fullScreen
+                        self?.present(navVc, animated: true)
+                    }
                 }
             }
-        }
+        }))
+        present(alert,animated:  true)
+        
+        
+        
     }
     // MARK: - TableView
     
