@@ -22,6 +22,7 @@ The app has several main features:
 <li>View Your Profile</li>
 <li>Save and Remove Albums</li>
   <li>Share Albums and Playlists with your friends</li>
+  <li>Support Dark Mode</li>
   </ul>
 
 
