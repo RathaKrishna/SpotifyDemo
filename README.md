@@ -12,15 +12,21 @@ A Full Spotify Mustic App based on the latest Swift that fetches latest albums, 
 
 # Features
 The app has several main features:
+<ul>
+  <li>Official Spotify API Use</li>
+<li>Playlists, Playlist Creation and Remove Playlist</li>
+<li>Browse & Recommended Album</li>
+<li>Search Songs, Albums, Artists, More</li>
+<li>Playback and Playlists Playback with Skip to next and back</li>
+<li>Sign In/Sign Out (OAUTH 2.0)</li>
+<li>View Your Profile</li>
+<li>Save and Remove Albums</li>
+  <li>Share Albums and Playlists with your friends</li>
+  </ul>
 
-Fetch songs based on categories: piano, pop, party, movies, opera, salsa, hip-hop, indian and many more </br>
-Search music based on album,artist,playlist,track. </br>
-Share favorite playlist using native iOS share sheet UIActivityController. </br>
-Support music player with previous and next track selection  </br>
-Search news based on the search query you type on the search bar. </br>
 
 # Getting Started
-Register for an user account at https://spotify.com </br>
+Register for an user account and obtain your own credentials from the Spotify Developer website  https://spotify.com </br>
 Download Xcode 13 from App Store. </br>
 
 # Installation
