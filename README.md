@@ -1,10 +1,11 @@
 # Swift Spotify App for iOS 15, iPadOS 15, macOS 12.
 
+![Apple iPhone 11 Pro Max Screenshot 0](https://user-images.githubusercontent.com/3157579/160372478-113ee5c7-b95d-4845-b334-fb93ecb46038.png)
+![Apple iPhone 11 Pro Max Screenshot 1](https://user-images.githubusercontent.com/3157579/160372498-4921ffb9-7682-4f1f-b5e8-0107af021318.png)
+![Apple iPhone 11 Pro Max Screenshot 2](https://user-images.githubusercontent.com/3157579/160372527-06ab7e92-7fd1-4853-bae7-119f83303ace.png)
+![Apple iPhone 11 Pro Max Screenshot 3](https://user-images.githubusercontent.com/3157579/160372544-90ee4780-c49c-435f-9cbf-e67dd2099508.png)
+![Apple iPhone 11 Pro Max Screenshot 4](https://user-images.githubusercontent.com/3157579/160372570-d882f245-5e67-40a0-aa62-ee9b3667b0fd.png)
 
-![Apple iPhone 11 Pro Max Screenshot 0](https://user-images.githubusercontent.com/3157579/159450186-31dbf149-4050-4b60-abac-3f8ead62c928.png)
-![Apple iPhone 11 Pro Max Screenshot 1](https://user-images.githubusercontent.com/3157579/159450202-04193e6c-8832-4835-b8e0-7cf40bb4aeae.png)
-![Apple iPhone 11 Pro Max Screenshot 2](https://user-images.githubusercontent.com/3157579/159450228-2835e64f-9e7a-419c-97de-9a9ef9ea292a.png)
-![Apple iPhone 11 Pro Max Screenshot 3](https://user-images.githubusercontent.com/3157579/159450243-fc1db5a4-53d2-42e3-8fb1-f3bebf2e2d29.png)
 
 A Full Spotify Mustic App based on the latest Swift that fetches latest albums, tracks, playlists, episodes from https://api.spotify.com targeting iOS 15, macOS 12.
 
