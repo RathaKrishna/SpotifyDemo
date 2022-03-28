@@ -12,8 +12,8 @@ final class AuthManager {
     
     private var refreshingToken = false
     struct Constants {
-        static let clientID = "b5675906669242aab351c06c3be69640"
-        static let clientSecret = "1500a64a5d104b8da40e38306a4b495f"
+        static let clientID = ""
+        static let clientSecret = ""
         static let tokenAPIURL = "https://accounts.spotify.com/api/token"
         static let scopes = "user-read-private%20playlist-modify-public%20playlist-read-private%20playlist-modify-private%20user-follow-read%20user-library-read%20user-library-modify%20user-read-email"
         static let redirectURI = "https://www.iosacademy.io"
