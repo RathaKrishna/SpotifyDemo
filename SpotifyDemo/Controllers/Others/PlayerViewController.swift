@@ -43,7 +43,8 @@ class PlayerViewController: UIViewController {
         imageView.snp.makeConstraints { make in
             make.top.equalTo(view.safeAreaInsets.top)
             make.left.right.equalTo(0)
-            make.width.height.equalTo(view.snp.width)
+            make.width.equalTo(view.snp.width)
+            make.height.equalTo(view.height/3)
         }
         controlsView.snp.makeConstraints { make in
             make.left.right.equalTo(imageView)

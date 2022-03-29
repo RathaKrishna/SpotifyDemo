@@ -44,6 +44,7 @@ class AudioPlayerViewController: UIViewController {
         super.viewDidLoad()
 
         view.backgroundColor = .systemBackground
+        view.layer.masksToBounds = true
         view.addSubview(imageView)
         view.addSubview(controlsView)
         controlsView.delegate = self
@@ -58,9 +59,10 @@ class AudioPlayerViewController: UIViewController {
     override func viewDidLayoutSubviews() {
         super.viewDidLayoutSubviews()
         imageView.snp.makeConstraints { make in
-            make.top.equalTo(view.safeAreaInsets.top)
+            make.top.equalTo(view.safeAreaInsets.top).offset(10)
             make.left.right.equalTo(0)
-            make.width.height.equalTo(view.snp.width)
+            make.width.equalTo(view.snp.width)
+            make.height.equalTo(view.height/1.6)
         }
         controlsView.snp.makeConstraints { make in
             make.left.right.equalTo(imageView)
