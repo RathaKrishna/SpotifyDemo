@@ -1,24 +1,33 @@
 # Swift Spotify App for iOS 15, iPadOS 15, macOS 12.
 
-
-![Apple iPhone 11 Pro Max Screenshot 0](https://user-images.githubusercontent.com/3157579/159450186-31dbf149-4050-4b60-abac-3f8ead62c928.png)
-![Apple iPhone 11 Pro Max Screenshot 1](https://user-images.githubusercontent.com/3157579/159450202-04193e6c-8832-4835-b8e0-7cf40bb4aeae.png)
-![Apple iPhone 11 Pro Max Screenshot 2](https://user-images.githubusercontent.com/3157579/159450228-2835e64f-9e7a-419c-97de-9a9ef9ea292a.png)
-![Apple iPhone 11 Pro Max Screenshot 3](https://user-images.githubusercontent.com/3157579/159450243-fc1db5a4-53d2-42e3-8fb1-f3bebf2e2d29.png)
+<div class="row">
+<img src="https://user-images.githubusercontent.com/3157579/160372478-113ee5c7-b95d-4845-b334-fb93ecb46038.png" width="120" height="260">
+<img src="https://user-images.githubusercontent.com/3157579/160372498-4921ffb9-7682-4f1f-b5e8-0107af021318.png" width="120" height="260">
+<img src="https://user-images.githubusercontent.com/3157579/160372527-06ab7e92-7fd1-4853-bae7-119f83303ace.png" width="120" height="260">
+<img src="https://user-images.githubusercontent.com/3157579/160372544-90ee4780-c49c-435f-9cbf-e67dd2099508.png" width="120" height="260">
+<img src="https://user-images.githubusercontent.com/3157579/160372570-d882f245-5e67-40a0-aa62-ee9b3667b0fd.png" width="120" height="260">
+</div>
 
 A Full Spotify Mustic App based on the latest Swift that fetches latest albums, tracks, playlists, episodes from https://api.spotify.com targeting iOS 15, macOS 12.
 
 # Features
 The app has several main features:
+<ul>
+  <li>Official Spotify API Use</li>
+<li>Playlists, Playlist Creation and Remove Playlist</li>
+<li>Browse & Recommended Album</li>
+<li>Search Songs, Albums, Artists, More</li>
+<li>Playback and Playlists Playback with Skip to next and back</li>
+<li>Sign In/Sign Out (OAUTH 2.0)</li>
+<li>View Your Profile</li>
+<li>Save and Remove Albums</li>
+  <li>Share Albums and Playlists with your friends</li>
+  <li>Support Dark Mode</li>
+  </ul>
 
-Fetch songs based on categories: piano, pop, party, movies, opera, salsa, hip-hop, indian and many more </br>
-Search music based on album,artist,playlist,track. </br>
-Share favorite playlist using native iOS share sheet UIActivityController. </br>
-Support music player with previous and next track selection  </br>
-Search news based on the search query you type on the search bar. </br>
 
 # Getting Started
-Register for an user account at https://spotify.com </br>
+Register for an user account and obtain your own credentials from the Spotify Developer website  https://spotify.com </br>
 Download Xcode 13 from App Store. </br>
 
 # Installation
