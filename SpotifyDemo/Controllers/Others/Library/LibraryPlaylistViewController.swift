@@ -138,6 +138,10 @@ extension LibraryPlaylistViewController: UITableViewDelegate, UITableViewDataSou
         vc.isOwner = true
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
+        print(indexPath)
+    }
 }
 
 extension LibraryPlaylistViewController: NoDataViewDelegate {

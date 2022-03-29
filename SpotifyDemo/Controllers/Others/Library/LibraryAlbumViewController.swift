@@ -12,6 +12,8 @@ class LibraryAlbumViewController: UIViewController {
     private var albums = [AlbumItems]()
     private let noDatView = NoDataView()
     
+    private var viewModels = [SearchResultsDefaultCellViewModel]()
+    
     let refreshControl: UIRefreshControl = {
         let refreshControl = UIRefreshControl()
         refreshControl.attributedTitle = NSAttributedString(string: "Pull to refresh")
@@ -47,8 +49,46 @@ class LibraryAlbumViewController: UIViewController {
             self?.fetchData()
         })
         
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(didLongPress(_:)))
+        tableView.addGestureRecognizer(longPress)
     }
 
+    @objc func didLongPress(_ gesture: UILongPressGestureRecognizer){
+        guard gesture.state == .began else {
+            return
+        }
+        
+        let endPoint = gesture.location(in: tableView)
+        guard let indexPath = tableView.indexPathForRow(at: endPoint)  else {
+            return
+        }
+        let albumToDelete = self.albums[indexPath.row]
+        let actionSheet = UIAlertController(title: albumToDelete.album.name, message: "Are you sure Remove this Album?", preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel))
+        actionSheet.addAction(UIAlertAction(title: "Remove", style: .destructive, handler: {[weak self] _ in
+            guard let strongSelf = self else {
+                return
+            }
+            let album = strongSelf.albums[indexPath.row].album
+            APICaller.shared.removeAlbum(album: album) {success in
+                DispatchQueue.main.async {
+                    
+                   
+                    if success {
+                        HapticManager.shared.vibrate(for: .success)
+                        strongSelf.albums.remove(at: indexPath.row)
+                        strongSelf.viewModels.remove(at: indexPath.row)
+                        strongSelf.tableView.deleteRows(at: [indexPath], with: .fade)
+                        strongSelf.tableView.reloadData()
+                    } else {
+                        HapticManager.shared.vibrate(for: .error)
+                        print("couldn't remove")
+                    }
+                }
+            }
+        }))
+        present(actionSheet, animated: true)
+    }
     @objc func doRefresh(_ sender: UIRefreshControl) {
         fetchData()
     }
@@ -65,6 +105,9 @@ class LibraryAlbumViewController: UIViewController {
                 case .success(let albums):
                     self?.albums = albums
                     self?.refreshControl.endRefreshing()
+                    self?.viewModels = albums.compactMap({
+                        SearchResultsDefaultCellViewModel(title: $0.album.name, imageUrl: URL(string: $0.album.images.first?.url ?? ""), subTitle: $0.album.artists.first?.name ?? "")
+                    })
                     self?.updatUI()
                     
                 case .failure(let error):
@@ -97,13 +140,13 @@ extension LibraryAlbumViewController: UITableViewDelegate, UITableViewDataSource
         guard let cell = tableView.dequeueReusableCell(withIdentifier: SearchResultsDefaultTableViewCell.identifier, for: indexPath) as? SearchResultsDefaultTableViewCell else {
             return UITableViewCell()
         }
-        let model = albums[indexPath.row]
-        cell.configure(with: SearchResultsDefaultCellViewModel(title: model.album.name, imageUrl: URL(string: model.album.images.first?.url ?? ""), subTitle: model.album.artists.first?.name ?? ""))
+        
+        cell.configure(with: viewModels[indexPath.row])
         return cell
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return albums.count
+        return viewModels.count
     }
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 80
@@ -118,6 +161,8 @@ extension LibraryAlbumViewController: UITableViewDelegate, UITableViewDataSource
 //        vc.isOwner = true
         navigationController?.pushViewController(vc, animated: true)
     }
+    
+    
 }
 
 extension LibraryAlbumViewController: NoDataViewDelegate {

@@ -16,10 +16,10 @@ final class APICaller {
         static let baseAPIURL =  "https://api.spotify.com/v1"
         
         static let profileUrl = baseAPIURL + "/me"
-        static let browseNewReleaseUrl = baseAPIURL + "/browse/new-releases?limit=50"
-        static let featurePlaylistUrl = baseAPIURL + "/browse/featured-playlists?limit=50"
+        static let browseNewReleaseUrl = baseAPIURL + "/browse/new-releases?country=IN&limit=50"
+        static let featurePlaylistUrl = baseAPIURL + "/browse/featured-playlists?country=IN&limit=50"
         static let recommendationsGenreUrl = baseAPIURL + "/recommendations/available-genre-seeds"
-        static let recommendationsUrl = baseAPIURL + "/recommendations?limit=40"
+        static let recommendationsUrl = baseAPIURL + "/recommendations?country=IN&limit=40"
         static let albumDetailsUrl = baseAPIURL + "/albums/"
         static let myAlbumstUrl = baseAPIURL + "/me/albums"
         static let myPlaylistUrl = baseAPIURL + "/me/playlists"
@@ -197,6 +197,58 @@ final class APICaller {
             var request = baseRequest
             
             request.setValue("application/json", forHTTPHeaderField: "Content-Type")
+            
+            let task = URLSession.shared.dataTask(with: request) { data, response, error in
+                guard let code = (response as? HTTPURLResponse)?.statusCode,
+                      error == nil else {
+                    completion(false)
+                    return
+                }
+                print(code)
+                
+                completion(code == 200 ? true : false)
+                
+                
+            }
+            task.resume()
+        }
+        
+    }
+    
+    public func checkSavedAlbum(album: Album, completion: @escaping (Bool) -> Void) {
+        
+        createRequest(with: URL(string:  Constants.myAlbumstUrl + "/contains?ids=\(album.id)"), type: .GET) { request in
+            
+            let task = URLSession.shared.dataTask(with: request) { data, _, error in
+                
+                guard let data = data, error == nil else {
+                    completion(false)
+                    return
+                }
+                do{
+                    let json = try JSONDecoder().decode([Bool].self, from: data)
+                    let result = json.first
+                    if result == true {
+                        completion(false)
+                    } else
+                    {
+                        completion(true)
+                    }
+                }
+                catch {
+                    print(error.localizedDescription)
+                    completion(false)
+                }
+                
+            }
+            task.resume()
+        }
+        
+    }
+    
+    public func removeAlbum(album: Album, completion: @escaping (Bool) -> Void) {
+        
+        createRequest(with: URL(string:  Constants.myAlbumstUrl + "?ids=\(album.id)"), type: .DELETE) { request in
             
             let task = URLSession.shared.dataTask(with: request) { data, response, error in
                 guard let code = (response as? HTTPURLResponse)?.statusCode,
@@ -459,6 +511,7 @@ final class APICaller {
             }
             var request = URLRequest(url: apiURL)
             request.setValue("Bearer \(token)", forHTTPHeaderField: "Authorization")
+            request.setValue("application/json", forHTTPHeaderField: "Content-Type")
             request.httpMethod = type.rawValue
             request.timeoutInterval = 30
             //            request.setValue("", forHTTPHeaderField: "")
